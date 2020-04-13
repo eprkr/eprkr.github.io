@@ -269,8 +269,9 @@ function openDeleteWindow() {
 }
 
 function openSessionsWindow() {
-    document.getElementById("sessionsContainer").style.display = "flex";
-    windowOpen = true;
+    alert("Currently under construction!");
+    //document.getElementById("sessionsContainer").style.display = "flex";
+    //windowOpen = true;
 }
 
 function openSettingsWindow() {
