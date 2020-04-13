@@ -2,17 +2,351 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>title</title>
-        <link rel="stylesheet" href="css/style.css" type="text/css">
+        <title>NewTimer</title>
+
+        <link rel="stylesheet" href="style.css" type="text/css">
+        <link rel="stylesheet" href="select.css" type="text/css">
+        <link rel="stylesheet" href="modal.css" type="text/css">
+
+        <link rel="shortcut icon" type="image/png" href="img/favicon-96x96.png"/>
+
+        <script type="text/javascript" src="functions.js"></script>
+        
+        <!--standard scrambles-->
+        <script src="jsss-master/scramble_222.js"></script>
+        <script src="jsss-master/scramble_333.js"></script>
+        <script src="jsss-master/scramble_NNN.js"></script>
+
+        <!--other scrambles-->
+        <script src="jsss-master/scramble_minx.js"></script>
+        <script src="jsss-master/scramble_pyram.js"></script>
+        <script src="jsss-master/scramble_sq1.js"></script>
+        <script src="jsss-master/scramble_clock.js"></script>
     </head>
-    <body>
-        <div class="header">
-            <a href="index.html>">
-                <img class="logo" src="src/img/logo_t.png">
-            </a>
-            <a href="index.html" style="text-decoration: none; color: #000;">
-                <span class="logoText">Quell Design</span>
-            </a>
+    <body onload="updateSettings(); updateStatistics();">
+        <div id="everything">
+            <div id="mainContainerLeft">
+                <div id="timesContainer">
+                    <table id="solvesTable">
+                        <tr id="headerTr">
+                            <td id="solvesTd">#</td>
+                            <td id="solvesTd">SOLVE TIME</td>
+                            <td id="solvesTd">AO5</td>
+                            <td id="solvesTd">AO12</td>
+                        </tr>
+                        <script>
+                            //Open the session that was last used if it exists
+                            if (localStorage.getItem("currentSession") === null) {
+                                currentSession = 0;
+                            } else {
+                                currentSession = JSON.parse(localStorage.getItem("currentSession"));
+                            }
+        
+                            //update the sessions array if it's in local storage
+                            if (localStorage.getItem("sessions") === null) {
+                                var seshNames = ["Default"];
+        
+                                var sessions = [new Array];
+                                //sessions.push("blank");
+                            } else {
+                                var sessions = JSON.parse(localStorage.getItem("sessions"));
+                                var seshNames = JSON.parse(localStorage.getItem("seshNames"));
+                            }
+        
+                            //update the solves/ao5s/ao12s arrays if they're in local storage
+                            if (localStorage.getItem("solves") === null) {
+                                var solves = [];
+                                var mods = [];
+                                var ao5s = [];
+                                var ao12s = [];
+                            } else {
+                                //var solves = JSON.parse(localStorage.getItem("solves"));
+                                if (sessions[currentSession]) {
+                                    var solves = sessions[currentSession];
+                                } else {
+                                    var solves = [];
+                                }
+                                var mods = JSON.parse(localStorage.getItem("mods"));
+                                var ao5s = JSON.parse(localStorage.getItem("ao5s"));
+                                var ao12s = JSON.parse(localStorage.getItem("ao12s"));
+                            }
+        
+                            //update the stored scrambles if they're in local storage
+                            if (localStorage.getItem("usedScrambles") == null) {
+                                var usedScrambles = [];
+                            } else {
+                                var usedScrambles = JSON.parse(localStorage.getItem("usedScrambles"));
+                            }
+                            
+                            var tableContents = '';
+        
+                            for (i = solves.length; i--;) {
+                                var timeFormatted = timeFormatter(solves[i]);
+                                var timeFloated = parseFloat(timeFormatted).toFixed(2);
+        
+                                var ao5Formatted = timeFormatter(ao5s[i]);
+                                var ao5Floated = parseFloat(ao5Formatted).toFixed(2);
+        
+                                var ao12Formatted = timeFormatter(ao12s[i]);
+                                var ao12Floated = parseFloat(ao12Formatted).toFixed(2);
+        
+                                var currentScramble = usedScrambles[i];
+                                var fixedScramble = currentScramble.replace(/'/g, "&apos;");
+                                
+                                tableContents += '<tr id="solvesTr"><td id="solvesTd">' + (i+1) + '</td>';
+        
+                                //solves
+                                if (timeFormatted.includes(":")) {
+                                    if (mods[i] == 0) {
+                                        tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>" + timeFormatted + "</span>" + '</td>';
+                                    } else {
+                                        if (mods[i] == 1) { //+2
+                                            tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>" + timeFormatted + "+</span>" + '</td>';
+                                        }
+
+                                        if (mods[i] == 2) { //DNF
+                                            tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>DNF</span>" + '</td>';
+                                        }
+                                    }
+                                } else {
+                                    if (mods[i] == 0) {
+                                        tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>" + timeFloated + "</span>" + '</td>';
+                                    } else {
+                                        if (mods[i] == 1) { //+2
+                                            tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>" + timeFloated + "+</span>" + '</td>';
+                                        }
+
+                                        if (mods[i] == 2) { //DNF
+                                            tableContents += '<td id="solvesTd">' + "<span title='" + fixedScramble + "'>DNF</span>" + '</td>';
+                                        }
+                                    }
+                                }
+        
+                                //ao5
+                                if (ao5Formatted.includes(":")) {
+                                    tableContents += '<td id="solvesTd">' + ao5Formatted + '</td>';
+                                } else {
+                                    tableContents += '<td id="solvesTd">' + ao5Floated + '</td>';
+                                }
+        
+                                //ao12
+                                if (ao12Formatted.includes(":")) {
+                                    tableContents += '<td id="solvesTd">' + ao12Formatted + '</td></tr>';
+                                } else {
+                                    tableContents += '<td id="solvesTd">' + ao12Floated + '</td></tr>';
+                                }
+                            }
+        
+                            document.write(tableContents);
+                        </script>
+                    </table>
+                </div>
+                <div id="statsContainer">
+                    <div id="titleBar">
+                        <span>&nbsp;&nbsp;STATISTICS</span>
+                        <span id="clickable" onclick="openAverageWindow()" title="GENERATE AVERAGE" style="font-size: 10pt; float: right; margin-right: 5px;">&#8599;</span>
+                    </div>
+                    <div id="statsTextHolder">
+                        <table id="statsTable">
+                            <tr>
+                                <td style="width: 150px;">Best Single:</td>
+                                <td style="text-align: right;" id="statsBestSingle">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Best Ao5:</td>
+                                <td style="text-align: right;" id="statsBestAo5">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Best Ao12:</td>
+                                <td style="text-align: right;" id="statsBestAo12">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Current Ao5:</td>
+                                <td style="text-align: right;" id="statsAo5">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Current Ao12:</td>
+                                <td style="text-align: right;" id="statsAo12">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Current Ao100:</td>
+                                <td style="text-align: right;" id="statsAo100">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 150px;">Current Ao1000:</td>
+                                <td style="text-align: right;" id="statsAo1000">0.00</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="mainContainerRight">
+                <div id="topBar">
+                    <div id="logoContainer">
+                        <span id="logoText">RoboTimer</span>
+                    </div>
+
+                    <div id="buttonsContainer">
+                        <table id="buttonsTable" cellspacing="25px">
+                            <tr>
+                                <td><image title="OK" id="buttonImg" src="img/ok.png" onClick="solveApplyOK()"></image></td>
+                                <td><image title="+2" id="buttonImg" src="img/plus2.png" onClick="solveApplyPlus2()"></image></td>
+                                <td><image title="DNF" id="buttonImg" src="img/dnf.png" onClick="solveApplyDNF()"></image></td>
+                                <td><image title="DELETE" id="buttonImg" src="img/delete.png" onClick="openDeleteWindow()"></image></td>
+                                <td><image title="SESSIONS" id="buttonImg" src="img/list.png" onClick="openSessionsWindow()"></image></td>
+                                <td><image title="SETTINGS" id="buttonImg" src="img/settings.png" onClick="openSettingsWindow()"></image></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="timerContainer">
+                    <span id="timer">0.00</span>
+                    <div id="scrambleContainer">
+                        <span id="scramble">if you can read this, something is broken</span> <!--or you're looking at my awful code... BEGONE, THOT-->
+                    </div>
+                </div>
+                
+            </div>
         </div>
+
+        <script type="text/javascript" src="timer.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+
+        <script type="text/javascript" src="dropdown.js"></script>
+
+        <!--BEGIN SETTINGS WINDOW-->
+        <div id="settingsWindow" class="windowModal">
+            <div class="windowModal-content-wide">
+                <div class="windowModal-header"><span style="padding-left: 10px;">SETTINGS</span></div>
+                    <div id="settingsContainer">
+                        <div id="settingsWindowLeft">
+                            <div class="modal-body" style="margin-left: 20px; margin-right: 20px;">
+                                <br><p id="settingsHeader">Look & Feel</p>
+                                <span>Theme: </span>
+                                <select id="selectBoxTheme" onchange="changeTheme()">
+                                <option value="default" selected="selected">Dark</option>
+                                <!--<option value="light">Light</option>
+                                <option value="green">Emerald</option>
+                                <option value="darkblue">Deep Sea</option>
+                                <option value="oled">Midnight</option>-->
+                                </select><br>
+                                <table>
+                                <tr>
+                                <td style="padding: 2px;"><input type="checkbox" id="checkBoxHideShowScramble" onclick="hideShowScramble();" disabled></td><td style="padding: 2px;"> Draw scramble</td>
+                                </tr>
+                                </table>
+
+                                <br><p id="settingsHeader">Timer Tweaks</p>
+                                <span>Scramble type: </span>
+                                <select id="selectBoxScramble" onchange="changeScramble()"e>
+                                <option value="222">2x2x2</option>
+                                <option value="333" selected="selected">3x3x3</option>
+                                <option value="444">4x4x4</option>
+                                <option value="555">5x5x5</option>
+                                <option value="666">6x6x6</option>
+                                <option value="777">7x7x7</option>
+                                <option value="minx">Megaminx</option>
+                                <option value="pyram">Pyraminx</option>
+                                <option value="sq1">Square-1</option>
+                                <option value="clock">Clock</option>
+                                <option value="333bf">3x3x3 BLD</option>
+                                </select><br><br>
+                                <table>
+                                <tr>
+                                <td style="padding: 2px;"><input type="checkbox" id="checkBoxHideShowTime" onclick="hideShowTime();"></td><td style="padding: 2px;"> Hide time while solving</td>
+                                </tr>
+
+                                <tr>
+                                <td style="padding: 2px;"><input type="checkbox" id="checkBoxHideShowText" onclick="hideShowText();" disabled></td><td style="padding: 2px;"> Hide all text while solving</td>
+                                </tr>
+
+                                <tr>
+                                <td style="padding: 2px;"><input type="checkbox" id="checkBoxInspection" onclick="toggleInspection();" disabled></td><td style="padding: 2px;"> Use WCA inspection</td>
+                                </tr>
+
+                                <tr>
+                                <td style="padding: 2px;"><input type="checkbox" id="checkBoxWarningAudio" onclick="toggleWarningAudio();" disabled></td><td style="padding: 2px;"> Warning voice: 
+                                <select id="warningVoiceSelect" onchange="changeWarningVoice();">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                </select>
+                                </td>
+                                </tr>
+                                </table><br><br>
+                            </div>
+                        </div>
+                        <div id="settingsWindowRight">
+                            <div class="modal-body" style="margin-left: 20px; margin-right: 20px;">
+                                <br><p id="settingsHeader">Controls</p>
+                                <p><b>Start/Stop the timer:</b> Space bar</p>
+                                <p><b>Manually add a solve:</b> Shift</p>
+                                <p><b>Delete the last solve:</b> Backspace</p>
+                                <p><b>Last scramble:</b> Left arrow key</p>
+                                <p><b>Next scramble:</b> Right arrow key</p>
+                                <p><b>Close open windows:</b> Escape</p>
+                                <p onclick="eraseData()"><b>[CLICK HERE TO ERASE ALL DATA!]</b></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="windowModal-buttons">
+                        <button class="styledButton" onclick="saveSettings()">Save changes</button>
+                        <button style="border-left: 1px solid #444;" class="styledButton" onclick="defaultSettings()">Restore defaults</button>
+                        <button style="border-left: 1px solid #444;" class="styledButton" onclick="document.getElementById('settingsWindow').style.display = 'none'; windowOpen = false;">Discard changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--END SETTINGS WINDOW-->
+
+        <!--BEGIN MANUALLY ADD SOLVE WINDOW-->
+        <div id="manualAddSolve" class="windowModal">
+            <div class="windowModal-content">
+                <div class="windowModal-header"><span style="padding-left: 10px;">ADD A SOLVE</span></div>
+                <div style="text-align: center;" class="modal-body">
+                    <br><p>Enter your solve time below.</p>
+                    <!--<span style="font-size: 8pt; font-style: italic;">(Example: 3.47 or 1:44.02)</span><br><br>-->
+                    <input id="manualSolveInput"><br><br>
+                </div>
+                <div class="windowModal-buttons">
+                    <button class="styledButton" onclick="addSolve()">Confirm</button>
+                    <button style="border-left: 1px solid #444;" class="styledButton" onclick="document.getElementById('manualAddSolve').style.display = 'none'; windowOpen = false;">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <!--END MANUALLY ADD SOLVE WINDOW-->
+
+        <!--BEGIN DELETE LAST SOLVE WINDOW-->
+        <div id="deleteLastSolve" class="windowModal">
+            <div class="windowModal-content">
+                <div class="windowModal-header"><span style="padding-left: 10px;">DELETE LAST SOLVE?</span></div>
+                <div style="text-align: center;" class="modal-body">
+                    <br><p>Click YES or press ENTER</p>
+                    <!--<p>(Use CTRL + Backspace to skip this prompt)</p> test this with a windows keyboard before doing it--><br> 
+                </div>
+                <div class="windowModal-buttons">
+                    <button class="styledButton" onclick="deleteLastSolve()">Yes</button>
+                    <button style="border-left: 1px solid #444;" class="styledButton" onclick="document.getElementById('deleteLastSolve').style.display = 'none'; windowOpen = false;">No</button>
+                </div>
+            </div>
+        </div>
+        <!--END DELETE LAST SOLVE WINDOW-->
+
+        <!--BEGIN GENERATE AVERAGE WINDOW-->
+        <div id="genAverageText" class="windowModal">
+            <div class="windowModal-content" style="width: 550px;">
+                <div class="windowModal-header"><span style="padding-left: 10px;">GENERATE AVERAGE</span></div>
+                <div class="modal-body">
+                    <p>Your generated average:</p>
+                    <!--<textarea rows="9" cols="59" id="genAvgTextArea" style="font-size: 10pt;"></textarea>-->
+                    <textarea id="genAvgTextArea" style="font-size: 10pt; height: 130px; width: 99%;"></textarea>
+                    <br><br>
+                </div>
+                <div class="windowModal-buttons">
+                    <button class="styledButton" onclick="copyAvgText();">Copy</button>
+                    <button style="border-left: 1px solid #444;" class="styledButton" onclick="document.getElementById('genAverageText').style.display = 'none'; windowOpen = false;">Close</button>
+                </div>
+            </div>
+        </div>
+        <!--END GENERATE AVERAGE WINDOW-->
     </body>
 </html>

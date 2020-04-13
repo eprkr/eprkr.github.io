@@ -1,0 +1,122 @@
+.modal {
+    vertical-align: middle;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 10; /* Sit on top */
+    margin-top: 40px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 315px;
+    height: calc(100% - 20px);
+}
+
+.modal-content {
+    position: relative;
+    float: left;
+    background-color: #222;
+    padding: 0;
+    width: 315px;
+    overflow: scroll;
+    -webkit-animation-name: slideDown;
+    -webkit-animation-duration: 0.5s;
+    animation-name: slideDown;
+    animation-duration: 0.5;
+}
+
+.windowModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 40; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.windowModal-content {
+    position: relative;
+    background-color: #222;
+    margin: auto;
+    padding: 0;
+    width: 375px;
+    -webkit-animation-name: slideDown;
+    -webkit-animation-duration: 0.5s;
+    animation-name: slideDown;
+    animation-duration: 0.5;
+    box-shadow: 5px 5px 10px #000;
+}
+
+.windowModal-content-wide {
+    position: relative;
+    background-color: #222;
+    margin: auto;
+    padding: 0;
+    width: 750px;
+    -webkit-animation-name: slideDown;
+    -webkit-animation-duration: 0.5s;
+    animation-name: slideDown;
+    animation-duration: 0.5;
+    box-shadow: 5px 5px 10px #000;
+}
+
+.windowModal-header {
+    display: flex;
+    background-color: #333;
+    width: 100%;
+    height: 45px;
+    justify-content: left;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+.windowModal-buttons {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+}
+
+.styledButton {
+    background-color: #333;
+    color: #FFF;
+    font-size: 12pt;
+    height: 45px;
+    width: 100%;
+    border: none;
+}
+
+.styledButton:hover {
+    background-color: #444;
+    cursor: pointer;
+}
+
+/* Slide up animation */
+@-webkit-keyframes slideUp {
+    from {bottom:-900px;} 
+    to {bottom:0;}
+}
+
+@keyframes slideUp {
+    from {bottom:-900px;}
+    to {bottom:0;}
+}
+
+/* Slide down animation */
+@-webkit-keyframes slideDown {
+    from {top:-900px;} 
+    to {top:0;}
+}
+
+@keyframes slideDown {
+    from {top:-900px;}
+    to {top:0;}
+}
+
+.modal-body {
+    padding: 2px 16px;
+    text-align: left;
+}

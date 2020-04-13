@@ -1,0 +1,9 @@
+features to add:
+
+* sessions
+* +2, DNF (solve mods)
+* inspection time + voice
+* cosmetic options (themes)
+* tweaks (hide time during solves, etc)
+* statistic exporting
+* scramble drawing
