@@ -538,7 +538,7 @@ function deleteLastSolve() {
 }
 
 function eraseData() {
-    if (confirm("Erase all data?")) {
+    if (confirm("Erase all data? (This will also reset your settings)")) {
         localStorage.clear();
         window.location.reload(true);
     }
